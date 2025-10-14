@@ -3,6 +3,8 @@ import dbConnection from './database/dbConnection.js';
 import mountRoutes from './modules/routes.js';
 import session from 'express-session';
 import mongoSession from 'connect-mongodb-session';
+import { resolve, join } from 'path';
+import cors from 'cors';
 
 const MongoDBStore = mongoSession(session);
 var store = new MongoDBStore({
@@ -12,13 +14,16 @@ var store = new MongoDBStore({
 
 dbConnection();
 const app = express();
+app.use(cors());
 app.use(session({
   secret: 'sarahah app mvc',
   resave: false,
   saveUninitialized: false,
   store
 }))
-app.use(express.static('public'));
+app.set("views", resolve() + "/views")
+app.set("view engine", "ejs")
+app.use(express.static(join(resolve(), 'public')));
 app.use(express.urlencoded());
 mountRoutes(app);
 
